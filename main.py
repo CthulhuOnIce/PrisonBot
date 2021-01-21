@@ -42,8 +42,8 @@ async def prison_man(user, guild, reason=None):
 	roles = global_prison_log[str(user.id)]
 
 	for i in roles:
-		await user.remove_roles(guild.get_role(i))
-	await user.add_roles(guild.get_role(C["muterole"]))
+		await user.remove_roles(guild.get_role(i), reason=reason)
+	await user.add_roles(guild.get_role(C["muterole"]), reason=reason)
 
 	return
 
@@ -54,8 +54,8 @@ async def unprison_man(user, guild, reason=None):
 	roles = global_prison_log[str(user.id)]
 
 	for i in roles:
-		await user.add_roles(guild.get_role(i))
-	await user.remove_roles(guild.get_role(C["muterole"]))
+		await user.add_roles(guild.get_role(i), reason=reason)
+	await user.remove_roles(guild.get_role(C["muterole"]), reason=reason)
 
 	global_prison_log.pop(str(user.id))
 	return
@@ -92,7 +92,7 @@ async def prison(ctx, member:discord.Member, time:str="0", *, reason=None):
     embed = discord.Embed(title="Prisoned!", description=f"{member.mention} has been prisoned. ", colour=discord.Colour.light_gray())
     embed.add_field(name="Moderator: ", value=ctx.author.mention, inline=False)
     embed.add_field(name="Reason:", value=reason, inline=False)
-    embed.add_field(name="Time left for the sentence:", value=f"{truetime} seconds.", inline=False)
+    embed.add_field(name="Time left for the sentence:", value=f"{truetime} seconds." if time != "0" else "Until released.", inline=False)
     await ctx.send(embed=embed)
 
     if time == "0":  # perma jail
