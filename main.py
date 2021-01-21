@@ -80,7 +80,7 @@ async def prison(ctx, member:discord.Member, time:str="0", *, reason=None):
 		return
 
 	if ctx.author == member:
-		await ctx.send("You can't mute yourself.")
+		await ctx.send("You can't prison yourself.")
 		return
 
 	if member.top_role >= ctx.author.top_role:
