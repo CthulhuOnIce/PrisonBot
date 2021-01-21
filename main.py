@@ -45,7 +45,7 @@ def time_to_seconds(time):
 
 async def prison_man(user, guild, truetime, reason=None):
 	global_prison_log[str(user.id)] = get_list_of_role_ids(user, guild)
-	prison_ledger[str(user.id)] = {"time_jailed": time.time(), "sentence": truetime}
+	prison_ledger[str(user.id)] = {"time_jailed": time.time(), "sentence": truetime, "reason": reason}
 	roles = global_prison_log[str(user.id)]
 
 	for i in roles:
@@ -147,7 +147,10 @@ async def sentence(ctx, member:discord.Member=None):
 	minutes = round(timeremainingsec // 60)
 	timeremainingsec %= 60
 	seconds = round(timeremainingsec)
-	await ctx.send(f"{member.mention} has **{day} days, {hour} hours, {minutes} minutes, and {seconds} seconds** left.")
+	embed = discord.Embed(title=f"Prison Info", description=f"{member.mention}'s Prison Info", colour=discord.Colour.light_gray())
+	embed.add_field(name="Reason: ", value=sentence_log["reason"])
+	embed.add_field(name="Time Left:", value=f"{day} days, {hour} hours, {minutes} minutes, and {seconds} seconds", inline=False)
+	await ctx.send(embed=embed)
 
 
 bot.run(C["token"])
