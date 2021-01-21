@@ -1,0 +1,5 @@
+prefix: "-"
+token: "token"
+muterole: 000
+authorizedroles:
+  - 000
