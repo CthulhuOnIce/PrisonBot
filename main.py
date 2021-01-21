@@ -41,7 +41,7 @@ def time_to_seconds(time):
 		try:
 			return int(time)
 		except:
-			return 0
+			return -1
 
 async def prison_man(user, guild, truetime, reason=None):
 	global_prison_log[str(user.id)] = get_list_of_role_ids(user, guild)
@@ -95,6 +95,11 @@ async def prison(ctx, member:discord.Member, time:str="0", *, reason=None):
 
 	truetime = time_to_seconds(time)
 
+	if truetime < 0: # hotfix
+		reason = time
+		truetime = 0
+		time = "0"
+
 	await prison_man(member, guild, truetime, reason=f"Muted by {ctx.author.name} for {truetime} seconds. ({reason})")
 
 	embed = discord.Embed(title="Prisoned!", description=f"{member.mention} has been prisoned. ", colour=discord.Colour.light_gray())
@@ -137,7 +142,10 @@ async def sentence(ctx, member:discord.Member=None):
 		await ctx.send(f"I didn't prison {member.mention}, ask the mod who did.")
 	sentence_log = prison_ledger[str(member.id)]
 	if sentence_log["sentence"] <= 0:
-		await ctx.send(f"{member.mention} is prison'd until let out.")
+		embed = discord.Embed(title=f"Prison Info", description=f"{member.mention}'s Prison Info", colour=discord.Colour.light_gray())
+		embed.add_field(name="Reason: ", value=sentence_log["reason"])
+		embed.add_field(name="Time Left:", value=f"Indefinitely", inline=False)
+		await ctx.send(embed=embed)
 		return
 	timeremainingsec = sentence_log["time_jailed"] + sentence_log["sentence"] - time.time()
 	day = round(timeremainingsec // (24 * 3600))
