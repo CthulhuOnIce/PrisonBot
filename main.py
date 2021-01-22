@@ -16,7 +16,7 @@ except FileNotFoundError:
 
 global_prison_log = {}
 prison_ledger = {}
-timefinderregex = r"([0-9]*[A-z])"
+timefinderregex = r"([0-9]+[A-z])"
 
 bot = commands.Bot(command_prefix=C["prefix"])
 
