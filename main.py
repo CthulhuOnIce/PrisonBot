@@ -158,6 +158,7 @@ async def sentence(ctx, member:discord.Member=None):
 	if not member:		member = ctx.author
 	if str(member.id) not in prison_ledger:
 		await ctx.send(f"The bot wasn't used to prison {member.mention}, you'll have to ask the mod who did it manually.")
+		return
 	sentence_log = prison_ledger[str(member.id)]
 	timeremainingsec = sentence_log["time_jailed"] + sentence_log["sentence"] - time.time()
 	embed = discord.Embed(title=f"Prison Info", description=f"{member.mention}'s Prison Info", colour=discord.Colour.light_gray())
