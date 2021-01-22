@@ -117,7 +117,7 @@ async def prison(ctx, member:discord.Member, time:str="0", *, reason=None):
 	embed = discord.Embed(title="Prisoned!", description=f"{member.mention} has been prisoned. ", colour=discord.Colour.light_gray())
 	embed.add_field(name="Moderator: ", value=ctx.author.mention, inline=False)
 	embed.add_field(name="Reason:", value=reason, inline=False)
-	embed.add_field(name="Time left for the sentence:", value={time_to_text(truetime) if truetime != 0 else "Until released.", inline=False)
+	embed.add_field(name="Time left for the sentence:", value=time_to_text(truetime) if truetime != 0 else "Until released.", inline=False)
 	await ctx.send(embed=embed)
 
 	if time == "0":  # perma jail
