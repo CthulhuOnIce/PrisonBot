@@ -6,6 +6,7 @@ import asyncio
 from threading import Thread
 import time
 import datetime
+import re
 
 try:
 	with open("config.yml", "r") as r:
@@ -15,6 +16,7 @@ except FileNotFoundError:
 
 global_prison_log = {}
 prison_ledger = {}
+timefinderregex = r"([0-9]*[A-z])"
 
 bot = commands.Bot(command_prefix=C["prefix"])
 
@@ -31,16 +33,20 @@ def authorize(user):
 			return True
 	return False
 
-def time_to_seconds(time):
+def time_to_seconds(time): # returns either an amount of minutes, or -1 to signify it's not a time at all, rather a part of the prison reason
+	matches = re.findall(timefinderregex, time)
 	time_convert = {"s": 1, "m": 60, "h": 3600, "d": 86400}
-	try:
-		return int(time[:-1]) * time_convert[time[-1]]
-	except:
+	if not len(matches):
 		try:
 			return int(time)
 		except:
 			return -1
-def time_to_text(length):
+	finaltime = 0
+	for match in matches:
+		finaltime += int(match[:-1]) * time_convert[match[-1]]
+	return finaltime
+
+def time_to_text(length): # TODO: atm it only allows one number and one unit, ie "5h", allow it to split and do multiple units, ie "1h30m"
 	days = round(length // (24 * 3600))
 	length = length % (24 * 3600)
 	hours = round(length // 3600)
