@@ -42,15 +42,29 @@ def time_to_seconds(time):
 			return int(time)
 		except:
 			return -1
-
-async def prison_man(user, guild, truetime, reason=None):
+def time_to_text(length):
+	days = round(length // (24 * 3600))
+	length = length % (24 * 3600)
+	hours = round(length // 3600)
+	length %= 3600
+	minutes = round(length // 60)
+	length %= 60
+	seconds = round(length)
+	txt = ""
+	if seconds:  txt = f"{seconds} second{'s' if seconds != 1  else ''}"
+	if minutes:   txt = f"{minutes} minute{'s' if minutes != 1 else ''}, " + txt
+	if hours:     txt = f"{hours} hour{'s' if hours != 1 else ''}, " + txt
+	if days:      txt = f"{days} day{'s' if days != 1 else ''}, " + txt
+	return txt.strip(", ")
+		
+async def prison_man(user, guild, ledger, summary=None):
 	global_prison_log[str(user.id)] = get_list_of_role_ids(user, guild)
-	prison_ledger[str(user.id)] = {"time_jailed": time.time(), "sentence": truetime, "reason": reason}
+	prison_ledger[str(user.id)] = ledger
 	roles = global_prison_log[str(user.id)]
 
 	for i in roles:
-		await user.remove_roles(guild.get_role(i), reason=reason)
-	await user.add_roles(guild.get_role(C["muterole"]), reason=reason)
+		await user.remove_roles(guild.get_role(i), reason=summary)
+	await user.add_roles(guild.get_role(C["muterole"]), reason=summary)
 
 	return
 
@@ -100,12 +114,12 @@ async def prison(ctx, member:discord.Member, time:str="0", *, reason=None):
 		truetime = 0
 		time = "0"
 
-	await prison_man(member, guild, truetime, reason=f"Muted by {ctx.author.name} for {truetime} seconds. ({reason})")
+	await prison_man(member, guild, {"time_jailed": time.time(), "sentence": truetime, "reason": reason, "admin": ctx.author}, summary=f"Muted by {ctx.author.name} for {truetime} seconds. ({reason})")
 
 	embed = discord.Embed(title="Prisoned!", description=f"{member.mention} has been prisoned. ", colour=discord.Colour.light_gray())
 	embed.add_field(name="Moderator: ", value=ctx.author.mention, inline=False)
 	embed.add_field(name="Reason:", value=reason, inline=False)
-	embed.add_field(name="Time left for the sentence:", value=f"{truetime} seconds." if time != "0" else "Until released.", inline=False)
+	embed.add_field(name="Time left for the sentence:", value=f"{time_to_text(truetime)" if truetime != 0 else "Until released.", inline=False)
 	await ctx.send(embed=embed)
 
 	if time == "0":  # perma jail
@@ -141,23 +155,12 @@ async def sentence(ctx, member:discord.Member=None):
 	if str(member.id) not in prison_ledger:
 		await ctx.send(f"I didn't prison {member.mention}, ask the mod who did.")
 	sentence_log = prison_ledger[str(member.id)]
-	if sentence_log["sentence"] <= 0:
-		embed = discord.Embed(title=f"Prison Info", description=f"{member.mention}'s Prison Info", colour=discord.Colour.light_gray())
-		embed.add_field(name="Reason: ", value=sentence_log["reason"])
-		embed.add_field(name="Time Left:", value=f"Indefinitely", inline=False)
-		await ctx.send(embed=embed)
-		return
 	timeremainingsec = sentence_log["time_jailed"] + sentence_log["sentence"] - time.time()
-	day = round(timeremainingsec // (24 * 3600))
-	timeremainingsec = timeremainingsec % (24 * 3600)
-	hour = round(timeremainingsec // 3600)
-	timeremainingsec %= 3600
-	minutes = round(timeremainingsec // 60)
-	timeremainingsec %= 60
-	seconds = round(timeremainingsec)
 	embed = discord.Embed(title=f"Prison Info", description=f"{member.mention}'s Prison Info", colour=discord.Colour.light_gray())
-	embed.add_field(name="Reason: ", value=sentence_log["reason"])
-	embed.add_field(name="Time Left:", value=f"{day} days, {hour} hours, {minutes} minutes, and {seconds} seconds", inline=False)
+	embed.add_field(name="Moderator: ", value=sentence_log["admin"].mention, inline=False)
+	embed.add_field(name="Reason: ", value=sentence_log["reason"], inline=False)
+	embed.add_field(name="Sentence: ", value=time_to_text(sentence_log["truetime"]), inline=False)				
+	embed.add_field(name="Time Left:", value=time_to_text(time_to_text(timeremainingsec) if sentence_log["time_jailed"] else "Indefinitely", inline=False)
 	await ctx.send(embed=embed)
 
 
