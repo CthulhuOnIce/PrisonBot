@@ -12,7 +12,8 @@ try:
 	with open("config.yml", "r") as r:
 		C = yaml.load(r.read(), Loader=yaml.FullLoader)
 except FileNotFoundError:
-	CRASH("No config.yml, please copy and rename config-example.yml and fill in the appropriate values.")
+	print("No config.yml, please copy and rename config-example.yml and fill in the appropriate values.")
+	exit()
 
 global_prison_log = {}
 prison_ledger = {}
