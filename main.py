@@ -96,7 +96,7 @@ async def prison(ctx, member:discord.Member, time:str="0", *, reason=None):
 	truetime = time_to_seconds(time)
 
 	if truetime < 0: # hotfix
-		reason = time + reason
+		reason = f"{time} {reason}"
 		truetime = 0
 		time = "0"
 
