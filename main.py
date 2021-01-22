@@ -110,7 +110,7 @@ async def prison(ctx, member:discord.Member, jailtime:str="0", *, reason=None):
 	if truetime < 0: # hotfix
 		reason = f"{jailtime} {reason}"
 		truetime = 0
-		time = "0"
+		jailtime = "0"
 
 	await prison_man(member, guild, {"time_jailed": time.time(), "sentence": truetime, "reason": reason, "admin": ctx.author}, summary=f"Muted by {ctx.author.name} for {truetime} seconds. ({reason})")
 
@@ -120,7 +120,7 @@ async def prison(ctx, member:discord.Member, jailtime:str="0", *, reason=None):
 	embed.add_field(name="Time left for the sentence:", value=time_to_text(truetime) if truetime != 0 else "Until released.", inline=False)
 	await ctx.send(embed=embed)
 
-	if time == "0":  # perma jail
+	if jailtime == "0":  # perma jail
 		return
 
 	await asyncio.sleep(truetime)
