@@ -7,8 +7,6 @@ from threading import Thread
 import time
 import datetime
 
-# https://discord.com/oauth2/authorize?client_id=801880841788719114&scope=bot&permissions=268435472
-
 try:
 	with open("config.yml", "r") as r:
 		C = yaml.load(r.read(), Loader=yaml.FullLoader)
