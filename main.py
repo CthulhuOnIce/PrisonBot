@@ -158,7 +158,7 @@ async def sentence(ctx, member:discord.Member=None):
 	embed.add_field(name="Moderator: ", value=sentence_log["admin"].mention, inline=False)
 	embed.add_field(name="Reason: ", value=sentence_log["reason"], inline=False)
 	embed.add_field(name="Sentence: ", value=time_to_text(sentence_log["sentence"]), inline=False)
-	embed.add_field(name="Time Left:", value=time_to_text(time_to_text(timeremainingsec) if sentence_log["time_jailed"] else "Indefinitely", inline=False))
+	embed.add_field(name="Time Left:", value=time_to_text(timeremainingsec) if sentence_log["time_jailed"] else "Indefinitely", inline=False)
 	await ctx.send(embed=embed)
 
 
