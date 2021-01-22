@@ -86,7 +86,7 @@ async def on_ready():
 	print("Ready to go.")
 
 @bot.command(brief="Admins only: Prison a user.")
-async def prison(ctx, member:discord.Member, time:str="0", *, reason=None):
+async def prison(ctx, member:discord.Member, jailtime:str="0", *, reason=None):
 	if not authorize(ctx.author):
 		await ctx.send("You aren't authorized to do this.")
 		return
@@ -105,10 +105,10 @@ async def prison(ctx, member:discord.Member, time:str="0", *, reason=None):
 
 	guild = ctx.guild
 
-	truetime = time_to_seconds(time)
+	truetime = time_to_seconds(jailtime)
 
 	if truetime < 0: # hotfix
-		reason = f"{time} {reason}"
+		reason = f"{jailtime} {reason}"
 		truetime = 0
 		time = "0"
 
