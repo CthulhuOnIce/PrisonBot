@@ -7,6 +7,7 @@ from threading import Thread
 import time
 import datetime
 import re
+from disputils import BotEmbedPaginator, BotConfirmation, BotMultipleChoice
 
 try:
 	with open("config.yml", "r") as r:
@@ -119,7 +120,7 @@ async def prison(ctx, member:discord.Member, jailtime:str="0", *, reason=None):
 		truetime = 0
 		jailtime = "0"
 
-	await prison_man(member, guild, {"time_jailed": time.time(), "sentence": truetime, "reason": reason, "admin": ctx.author}, summary=f"Muted by {ctx.author.name} for {truetime} seconds. ({reason})")
+	await prison_man(member, guild, {"time_jailed": time.time(), "sentence": truetime, "reason": reason, "admin": ctx.author, "member": member}, summary=f"Muted by {ctx.author.name} for {truetime} seconds. ({reason})")
 
 	embed = discord.Embed(title="Prisoned!", description=f"{member.mention} has been prisoned. ", colour=discord.Colour.light_gray())
 	embed.add_field(name="Moderator: ", value=ctx.author.mention, inline=False)
@@ -169,5 +170,22 @@ async def sentence(ctx, member:discord.Member=None):
 	embed.add_field(name="Time Left:", value=time_to_text(timeremainingsec) if sentence_log["sentence"] else "Indefinitely", inline=False)
 	await ctx.send(embed=embed)
 
+@bot.command(brief="Get list of currently imprisoned members.")
+async def prisoners(ctx):
+	pages = []
+	for prisoner_id in prison_ledger:
+		prisoner = prison_ledger[prisoner_id]
+		timeremainingsec = prisoner["time_jailed"] + prisoner["sentence"] - time.time()
+		embed = discord.Embed(title=f"Current Prisoners", description=prisoner["member"].mention, colour=discord.Colour.light_gray())
+		embed.add_field(name="Moderator: ", value=prisoner["admin"].mention, inline=False)
+		embed.add_field(name="Reason: ", value=prisoner["reason"] if prisoner["reason"] else "None given.", inline=False)
+		embed.add_field(name="Sentence: ", value=time_to_text(prisoner["sentence"]) if prisoner["sentence"] else "Indefinitely", inline=False)
+		embed.add_field(name="Time Left:", value=time_to_text(timeremainingsec) if prisoner["sentence"] else "Indefinitely", inline=False)
+		pages.append(embed)
+	if len(pages):
+		paginator = BotEmbedPaginator(ctx, pages)
+		await paginator.run()
+	else:
+		await ctx.send("I'm currently not tracking any prisoners.\nEither there are no prisoners, or they were all placed their manually.")
 
 bot.run(C["token"])
