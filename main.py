@@ -186,6 +186,6 @@ async def prisoners(ctx):
 		paginator = BotEmbedPaginator(ctx, pages)
 		await paginator.run()
 	else:
-		await ctx.send("I'm currently not tracking any prisoners.\nEither there are no prisoners, or they were all placed their manually.")
+		await ctx.send("I'm currently not tracking any prisoners.\nEither there are no prisoners, or they were all placed there manually.")
 
 bot.run(C["token"])
