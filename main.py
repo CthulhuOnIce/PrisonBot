@@ -120,7 +120,7 @@ async def prison(ctx, member:discord.Member, jailtime:str="0", *, reason=None):
 		truetime = 0
 		jailtime = "0"
 
-	await prison_man(member, guild, {"time_jailed": time.time(), "sentence": truetime, "reason": reason, "admin": ctx.author, "member": member}, summary=f"Muted by {ctx.author.name} for {truetime} seconds. ({reason})")
+	await prison_man(member, guild, {"time_jailed": time.time(), "sentence": truetime, "reason": reason, "admin": ctx.author, "member": member}, summary=f"Prison'd by {ctx.author.name} for {time_to_text(truetime)}. ({reason})")
 
 	embed = discord.Embed(title="Prisoned!", description=f"{member.mention} has been prisoned. ", colour=discord.Colour.light_gray())
 	embed.add_field(name="Moderator: ", value=ctx.author.mention, inline=False)
