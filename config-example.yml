@@ -2,5 +2,13 @@ prefix: "-"
 token: "token"
 muterole: 000
 verifiedrole: 000
+verificationroles:
+  republican: 000
+  independant: 000
+  democrat: 000
+verificationchannels:
+  republican: 000
+  independant: 000
+  democrat: 000
 authorizedroles:
   - 000

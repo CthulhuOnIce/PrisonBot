@@ -209,14 +209,23 @@ async def prisoners(ctx):
 		await ctx.send("I'm currently not tracking any prisoners.\nEither there are no prisoners, or they were all placed there manually.")
 
 @bot.command(brief="Admin Only: Verify a user.")
-async def verify(ctx, member:discord.Member):
+async def verify(ctx, member:discord.Member, ideology:str=None):
 	if not authorize(ctx.author):
 		await ctx.send("You aren't authorized to do this.")
 		return
-	for i in member.roles:
-		if "unverified" in i.name.lower():
-			await member.remove_roles(i)
-	await member.add_roles(ctx.guild.get_role(C["verifiedrole"]))
+	
+	if not ideology:  # they did the ideology verification and are ready to enter the main server
+		for i in member.roles:
+			if "unverified" in i.name.lower():
+				await member.remove_roles(i)
+		await member.add_roles(ctx.guild.get_role(C["verifiedrole"]))
+	else:  # they did the first step but need to be moved into a party verification room
+		ideology = ideology.lower()[0]  # so "republican" or shorthand "r" both work
+		iddict = {"r":"republican", "d":"democrat", "i":"independant"}
+		ideology_key = iddict[ideology]
+		await member.add_roles(ctx.guild.get_role(C["verificationroles"][ideology_key]))
+		await ctx.get_channel(C["verificationchannels"][ideology_key]).send(f"""Welcome, {member.mention}. Please get roles if you haven't already. This is the last step of our verification process.
+All we ask you to do is elaborate on your political views (approval of Trump, opinion on abortion, immigration, gun control) and then end off by explaining why you align with your party.""")
 	await ctx.message.add_reaction("✅")
 
 bot.run(C["token"])
