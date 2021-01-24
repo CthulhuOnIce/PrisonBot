@@ -217,6 +217,6 @@ async def verify(ctx, member:discord.Member):
 		if "unverified" in i.name.lower():
 			await member.remove_roles(i)
 	await member.add_roles(ctx.guild.get_role(C["verifiedrole"]))
-	await ctx.message.add_reaction("✔")
+	await ctx.message.add_reaction("✅")
 
 bot.run(C["token"])
