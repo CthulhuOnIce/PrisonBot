@@ -126,7 +126,7 @@ async def prison(ctx, member:discord.Member, jailtime:str="0", *, reason=None):
 	embed.add_field(name="Moderator: ", value=ctx.author.mention, inline=False)
 	embed.add_field(name="Reason: ", value=reason, inline=False)
 	embed.add_field(name="Time left for the sentence: ", value=time_to_text(truetime) if truetime != 0 else "Until released.", inline=False)
-	embed.add_field(name="Extra Info: ", value="Use ?sentence to see how much time you or someone else has left")
+	embed.add_field(name="Extra Info: ", value=f"Use {C['prefix']}sentence to see how much time you or someone else has left")
 
 	try:
 		await member.send(embed=embed)
