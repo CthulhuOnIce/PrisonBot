@@ -104,7 +104,7 @@ async def prison(ctx, member:discord.Member, jailtime:str="0", *, reason=None):
 		return
 
 	if member.top_role >= ctx.author.top_role:
-		await ctx.send("You can only mute people who you outrank.")
+		await ctx.send("You can only prison people who you outrank.")
 		return
 
 	if f"{member.id}" in global_prison_log:
@@ -158,7 +158,7 @@ async def unprison(ctx, member:discord.Member, *, reason=None):
 		return
 
 	if not f"{member.id}" in global_prison_log:
-		await ctx.send("I didn't mute them, you'll have to do it manually.")
+		await ctx.send("I didn't prison them, you'll have to do it manually.")
 		return
 
 	guild = ctx.guild
