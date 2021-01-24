@@ -126,12 +126,10 @@ async def prison(ctx, member:discord.Member, jailtime:str="0", *, reason=None):
 	embed.add_field(name="Moderator: ", value=ctx.author.mention, inline=False)
 	embed.add_field(name="Reason: ", value=reason, inline=False)
 	embed.add_field(name="Time left for the sentence: ", value=time_to_text(truetime) if truetime != 0 else "Until released.", inline=False)
+	embed.add_field(name="Extra Info: ", value="Use ?sentence to see how much time you or someone else has left")
 
 	try:
-		dmembed = discord.Embed.from_dict(embed.to_dict())  # non-reference copy
-		dmembed.load
-		dmembed.add_field(name="Extra Info: ", value="Use ?sentence to see how much time you have left")
-		await member.send(embed=dmembed)
+		await member.send(embed=embed)
 	except:
 		embed.set_footer(text="I couldn't DM them.")
 
