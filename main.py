@@ -208,4 +208,15 @@ async def prisoners(ctx):
 	else:
 		await ctx.send("I'm currently not tracking any prisoners.\nEither there are no prisoners, or they were all placed there manually.")
 
+@bot.command(brief="Admin Only: Verify a user.")
+async def verify(ctx, member:discord.Member):
+	if not authorize(ctx.author):
+		await ctx.send("You aren't authorized to do this.")
+		return
+	for i in member.roles:
+		if "unverified" in i.name.lower():
+			await member.remove_roles(i)
+	await member.add_roles(ctx.guild.get_role(C["verifiedrole"]))
+	await ctx.message.add_reaction("✔")
+
 bot.run(C["token"])

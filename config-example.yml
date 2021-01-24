@@ -1,5 +1,6 @@
 prefix: "-"
 token: "token"
 muterole: 000
+verifiedrole: 000
 authorizedroles:
   - 000
