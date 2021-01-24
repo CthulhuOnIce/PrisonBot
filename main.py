@@ -120,18 +120,33 @@ async def prison(ctx, member:discord.Member, jailtime:str="0", *, reason=None):
 		truetime = 0
 		jailtime = "0"
 
-	await prison_man(member, guild, {"time_jailed": time.time(), "sentence": truetime, "reason": reason, "admin": ctx.author, "member": member}, summary=f"Prison'd by {ctx.author.name} for {time_to_text(truetime)}. ({reason})")
+	await prison_man(member, guild, {"time_jailed": time.time(), "sentence": truetime, "reason": reason, "admin": ctx.author, "member": member}, summary=f"Muted by {ctx.author.name} for {time_to_text(truetime)}. ({reason})")
 
 	embed = discord.Embed(title="Prisoned!", description=f"{member.mention} has been prisoned. ", colour=discord.Colour.light_gray())
 	embed.add_field(name="Moderator: ", value=ctx.author.mention, inline=False)
-	embed.add_field(name="Reason:", value=reason, inline=False)
-	embed.add_field(name="Time left for the sentence:", value=time_to_text(truetime) if truetime != 0 else "Until released.", inline=False)
+	embed.add_field(name="Reason: ", value=reason, inline=False)
+	embed.add_field(name="Time left for the sentence: ", value=time_to_text(truetime) if truetime != 0 else "Until released.", inline=False)
+
+	try:
+		dmembed = embed
+		dmembed.add_field(name="Extra Info: ", value="Use ?sentence to see how much time you have left")
+		await member.send(embed=dmembed)
+	except:
+		embed.set_footer(text="I couldn't DM them.")
+
 	await ctx.send(embed=embed)
 
 	if jailtime == "0":  # perma jail
 		return
 
 	await asyncio.sleep(truetime)
+
+	try:
+		embed = discord.Embed(title="Unprisoned", description=f"{member.mention} has been unprisoned. ", colour=discord.Colour.light_gray())
+		embed.add_field(name="Reason: ", value="Your prison sentence has expired.", inline=False)
+		await member.send(embed=embed)
+	except:
+		pass
 
 	await unprison_man(member, guild, reason="Time expired.")
 
@@ -153,6 +168,12 @@ async def unprison(ctx, member:discord.Member, *, reason=None):
 	embed = discord.Embed(title="UnPrisoned!", description=f"{member.mention} has been unprisoned early. ", colour=discord.Colour.light_gray())
 	embed.add_field(name="Moderator: ", value=ctx.author.mention, inline=False)
 	embed.add_field(name="Reason:", value=reason, inline=False)
+
+	try:
+		await member.send(embed=embed)
+	except:
+		embed.set_footer(text="I couldn't DM them.")
+
 	await ctx.send(embed=embed)
 
 @bot.command(brief="Get time left in sentence.")
