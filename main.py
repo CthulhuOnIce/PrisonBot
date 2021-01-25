@@ -77,12 +77,14 @@ async def prison_man(user, guild, ledger, summary=None):
 async def unprison_man(user, guild, reason=None):
 	if str(user.id) not in global_prison_log:
 		return
+	
+	prisoner = guild.get_role(C["muterole"])
 
-	roles = global_prison_log[str(user.id)]
-
-	for i in roles:
-		await user.add_roles(guild.get_role(i), reason=reason)
-	await user.remove_roles(guild.get_role(C["muterole"]), reason=reason)
+	if user in guild.members and prisoner in user.roles: # hasn't left the server or been removed manually
+		roles = global_prison_log[str(user.id)]
+		for i in roles:
+			await user.add_roles(guild.get_role(i), reason=reason)
+		await user.remove_roles(guild.get_role(C["muterole"]), reason=reason)
 
 	global_prison_log.pop(str(user.id))
 	prison_ledger.pop(str(user.id))
@@ -207,6 +209,19 @@ async def prisoners(ctx):
 		await paginator.run()
 	else:
 		await ctx.send("I'm currently not tracking any prisoners.\nEither there are no prisoners, or they were all placed there manually.")
+
+@bot.command(brief="Admin only: Clear prison cache")
+async def clearcache(ctx):
+	if not authorize(ctx.author):
+		await ctx.send("You aren't authorized to do this.")
+		return
+	tally = 0
+	for user_id in prison_ledger:
+		user = prison_ledger[user_id]
+		if (user not in ctx.guild.members) or (ctx.guild.get_role(C["muterole"]) not in user.roles):
+			await unprison_man(user, ctx.guild, "Cleared cache.")
+			tally += 1
+	await ctx.send(f"Cleared cache, removed **{tally}** prisoners from ledger who either left or were released manually.")
 
 @bot.command(brief="Admin Only: Verify a user.")
 async def verify(ctx, member:discord.Member, ideology:str=None):
