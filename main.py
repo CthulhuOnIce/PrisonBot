@@ -80,10 +80,12 @@ async def unprison_man(user, guild, reason=None):
 	
 	prisoner = guild.get_role(C["muterole"])
 
-	if (user in guild.members) and (prisoner in user.roles): # hasn't left the server or been removed manually
+	try: # hasn't left the server or been removed manually
 		roles = global_prison_log[str(user.id)]
 		for i in roles:	await user.add_roles(guild.get_role(i), reason=reason)
 		await user.remove_roles(guild.get_role(C["muterole"]), reason=reason)
+	except:
+		pass
 
 	global_prison_log.pop(str(user.id))
 	prison_ledger.pop(str(user.id))
