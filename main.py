@@ -217,7 +217,7 @@ async def clearcache(ctx):
 		return
 	tally = 0
 	for user_id in prison_ledger:
-		user = prison_ledger[user_id]
+		user = prison_ledger[user_id]["member"]
 		if (user not in ctx.guild.members) or (ctx.guild.get_role(C["muterole"]) not in user.roles):
 			await unprison_man(user, ctx.guild, "Cleared cache.")
 			tally += 1
