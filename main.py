@@ -20,7 +20,14 @@ global_prison_log = {}
 prison_ledger = {}
 timefinderregex = r"([0-9]+[A-z])"
 
-bot = commands.Bot(command_prefix=C["prefix"])
+intents = discord.Intents.default()
+intents.members = True
+
+bot = commands.Bot(
+	command_prefix=C["prefix"],
+	chunk_guilds_at_startup=True,
+	intents=intents
+	)
 
 def get_list_of_role_ids(user, guild):
 	lst = []
@@ -77,16 +84,16 @@ async def prison_man(user, guild, ledger, summary=None):
 async def unprison_man(user, guild, reason=None):
 	if str(user.id) not in global_prison_log:
 		return
+
+	print(f"Unprisoning {user.name}")
 	
 	prisoner = guild.get_role(C["muterole"])
 
-	try:  # shitcode moment
-		if(prisoner in user.roles):
-			roles = global_prison_log[str(user.id)]
-			for i in roles:	await user.add_roles(guild.get_role(i), reason=reason)
-			await user.remove_roles(guild.get_role(C["muterole"]), reason=reason)
-	except:
-		pass
+	if(prisoner in user.roles) and (user in guild.members):
+		roles = global_prison_log[str(user.id)]
+		for i in roles:
+			await user.add_roles(guild.get_role(i), reason=reason)
+		await user.remove_roles(prisoner, reason=reason)
 
 	global_prison_log.pop(str(user.id))
 	prison_ledger.pop(str(user.id))
