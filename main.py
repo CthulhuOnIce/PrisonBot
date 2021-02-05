@@ -179,7 +179,7 @@ async def unprison(ctx, member:discord.Member, *, reason=None):
 	await unprison_man(member, guild, reason=f"Let out early by {ctx.author.name}")
 
 	embed = discord.Embed(title="UnPrisoned!", description=f"{longform_name(member)} has been unprisoned early. ", colour=discord.Colour.light_gray())
-	embed.add_field(name="Moderator: ", value=ctx.author.mention, inline=False)
+	embed.add_field(name="Moderator: ", value=longform_name(ctx.author), inline=False)
 	embed.add_field(name="Reason:", value=reason, inline=False)
 
 	try:
