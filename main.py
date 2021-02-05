@@ -55,6 +55,9 @@ def time_to_seconds(time): # returns either an amount of minutes, or -1 to signi
 		finaltime += int(match[:-1]) * time_convert[match[-1]]
 	return finaltime
 
+def longform_name(user):
+	return f"{user.mention} ({user.name}#{user.discriminator})"
+
 def time_to_text(length): # TODO: atm it only allows one number and one unit, ie "5h", allow it to split and do multiple units, ie "1h30m"
 	days = round(length // (24 * 3600))
 	length = length % (24 * 3600)
@@ -133,8 +136,8 @@ async def prison(ctx, member:discord.Member, jailtime:str="0", *, reason=None):
 
 	await prison_man(member, guild, {"time_jailed": time.time(), "sentence": truetime, "reason": reason, "admin": ctx.author, "member": member}, summary=f"Muted by {ctx.author.name} for {time_to_text(truetime)}. ({reason})")
 
-	embed = discord.Embed(title="Prisoned!", description=f"{member.mention} has been prisoned. ", colour=discord.Colour.light_gray())
-	embed.add_field(name="Moderator: ", value=ctx.author.mention, inline=False)
+	embed = discord.Embed(title="Prisoned!", description=f"{longform_name(member)} has been prisoned. ", colour=discord.Colour.light_gray())
+	embed.add_field(name="Moderator: ", value=longform_name(ctx.author), inline=False)
 	embed.add_field(name="Reason: ", value=reason, inline=False)
 	embed.add_field(name="Time left for the sentence: ", value=time_to_text(truetime) if truetime != 0 else "Until released.", inline=False)
 	embed.add_field(name="Extra Info: ", value=f"Use {C['prefix']}sentence to see how much time you or someone else has left")
@@ -152,7 +155,7 @@ async def prison(ctx, member:discord.Member, jailtime:str="0", *, reason=None):
 	await asyncio.sleep(truetime)
 
 	try:
-		embed = discord.Embed(title="Unprisoned", description=f"{member.mention} has been unprisoned. ", colour=discord.Colour.light_gray())
+		embed = discord.Embed(title="Unprisoned", description=f"{longform_name(member)} has been unprisoned. ", colour=discord.Colour.light_gray())
 		embed.add_field(name="Reason: ", value="Your prison sentence has expired.", inline=False)
 		await member.send(embed=embed)
 	except:
@@ -175,7 +178,7 @@ async def unprison(ctx, member:discord.Member, *, reason=None):
 
 	await unprison_man(member, guild, reason=f"Let out early by {ctx.author.name}")
 
-	embed = discord.Embed(title="UnPrisoned!", description=f"{member.mention} has been unprisoned early. ", colour=discord.Colour.light_gray())
+	embed = discord.Embed(title="UnPrisoned!", description=f"{longform_name(member)} has been unprisoned early. ", colour=discord.Colour.light_gray())
 	embed.add_field(name="Moderator: ", value=ctx.author.mention, inline=False)
 	embed.add_field(name="Reason:", value=reason, inline=False)
 
@@ -194,8 +197,8 @@ async def sentence(ctx, member:discord.Member=None):
 		return
 	sentence_log = prison_ledger[str(member.id)]
 	timeremainingsec = sentence_log["time_jailed"] + sentence_log["sentence"] - time.time()
-	embed = discord.Embed(title=f"Prison Info", description=f"{member.mention}'s Prison Info", colour=discord.Colour.light_gray())
-	embed.add_field(name="Moderator: ", value=sentence_log["admin"].mention, inline=False)
+	embed = discord.Embed(title=f"Prison Info", description=f"{longform_name(member)}'s Prison Info", colour=discord.Colour.light_gray())
+	embed.add_field(name="Moderator: ", value=longform_name(sentence_log["admin"]), inline=False)
 	embed.add_field(name="Reason: ", value=sentence_log["reason"] if sentence_log["reason"] else "None given.", inline=False)
 	embed.add_field(name="Sentence: ", value=time_to_text(sentence_log["sentence"]) if sentence_log["sentence"] else "Indefinitely", inline=False)
 	embed.add_field(name="Time Left:", value=time_to_text(timeremainingsec) if sentence_log["sentence"] else "Indefinitely", inline=False)
@@ -207,8 +210,8 @@ async def prisoners(ctx):
 	for prisoner_id in prison_ledger:
 		prisoner = prison_ledger[prisoner_id]
 		timeremainingsec = prisoner["time_jailed"] + prisoner["sentence"] - time.time()
-		embed = discord.Embed(title=f"Current Prisoners", description=prisoner["member"].mention, colour=discord.Colour.light_gray())
-		embed.add_field(name="Moderator: ", value=prisoner["admin"].mention, inline=False)
+		embed = discord.Embed(title=f"Current Prisoners", description=longform_name(prisoner["member"]), colour=discord.Colour.light_gray())
+		embed.add_field(name="Moderator: ", value=longform_name(prisoner["admin"]), inline=False)
 		embed.add_field(name="Reason: ", value=prisoner["reason"] if prisoner["reason"] else "None given.", inline=False)
 		embed.add_field(name="Sentence: ", value=time_to_text(prisoner["sentence"]) if prisoner["sentence"] else "Indefinitely", inline=False)
 		embed.add_field(name="Time Left:", value=time_to_text(timeremainingsec) if prisoner["sentence"] else "Indefinitely", inline=False)
