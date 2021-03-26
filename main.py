@@ -78,8 +78,11 @@ async def prison_man(user, guild, ledger, summary=None):
 	prison_ledger[str(user.id)] = ledger
 	roles = global_prison_log[str(user.id)]
 
+	delroles = []
+
 	for i in roles:
-		await user.remove_roles(guild.get_role(i), reason=summary)
+		delroles.append(guild.get_role(i))
+	await user.remove_roles(*delroles, reason=summary)
 	await user.add_roles(guild.get_role(C["muterole"]), reason=summary)
 
 	return
@@ -94,8 +97,10 @@ async def unprison_man(user, guild, reason=None):
 
 	if(prisoner in user.roles) and (user in guild.members):
 		roles = global_prison_log[str(user.id)]
+		addroles = []
 		for i in roles:
-			await user.add_roles(guild.get_role(i), reason=reason)
+			addroles.append(guild.get_role(i))
+		await user.add_roles(*addroles, reason=reason)
 		await user.remove_roles(prisoner, reason=reason)
 
 	global_prison_log.pop(str(user.id))
