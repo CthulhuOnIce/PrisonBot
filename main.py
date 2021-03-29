@@ -258,7 +258,7 @@ async def verify(ctx, member:discord.Member, ideology:str=None):
 		ideology_key = iddict[ideology]
 		await member.add_roles(ctx.guild.get_role(C["verificationroles"][ideology_key]))
 		await ctx.guild.get_channel(C["verificationchannels"][ideology_key]).send(f"""Welcome, {member.mention}. Please get roles if you haven't already. This is the last step of our verification process.
-All we ask you to do is elaborate on your political views (approval of Trump, opinion on abortion, immigration, gun control) and then end off by explaining why you align with your party.""")
+All we ask you to do is elaborate on your political views (approval of Trump, opinion on abortion, immigration, gun control, LGBTQ+ rights) and then end off by explaining why you align with your party.""")
 	await ctx.message.add_reaction("✅")
 
 bot.run(C["token"])
